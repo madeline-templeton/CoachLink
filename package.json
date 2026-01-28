@@ -1,0 +1,22 @@
+{
+  "name": "coachlink",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev:frontend": "npm run -w frontend dev",
+    "dev:backend": "npm run -w backend dev",
+    "build": "npm run -w frontend build",
+    "test": "npm run -w frontend test && npm run -w backend test",
+    "lint": "npm run -w frontend lint"
+  },
+  "dependencies": {
+    "firebase": "^12.8.0"
+  }
+}
