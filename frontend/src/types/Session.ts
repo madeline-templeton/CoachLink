@@ -1,0 +1,15 @@
+export type Session = {
+  id?: string;
+  sport: string; // e.g., 'tennis'
+  date: string; // YYYY-MM-DD
+  state: string; // e.g., 'RI'
+  city: string; // e.g., 'Providence'
+  coachName?: string;
+  coachEmail?: string;
+  coachExperience?: string;
+  skill?: string; // e.g., 'beginner', 'intermediate', 'advanced'
+  duration?: number; // minutes
+  cost?: number; // USD
+  availableSlots?: number;
+  createdAt?: number;
+};

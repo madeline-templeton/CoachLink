@@ -3,6 +3,8 @@ import { z } from "zod";
 export const SessionSchema = z.object({
   date: z.date(),
 
+  sport : z.string(),
+
   // HH:MM format, 24-hour clock, no seconds
   time: z
     .string()
