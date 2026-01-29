@@ -1,10 +1,9 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import userHandlers from "./handlers/users";
 import sessionsHandlers from "./handlers/sessions";
 import realtimeHandlers from "./handlers/realtime";
-dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -12,9 +11,17 @@ app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
 });
 app.use("/users", userHandlers);
-app.use("/sessions", sessionsHandlers);
 app.use("/rtdb", realtimeHandlers);
+app.use("/sessions", sessionsHandlers);
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Backend running on http://localhost:${port}`);
+});
+server.on("error", (err) => {
+    if (err && err.code === "EADDRINUSE") {
+        console.error(`Port ${port} is already in use. Set PORT to a different value (e.g., 8081) and retry.`);
+    }
+    else {
+        console.error("Server error:", err);
+    }
 });

@@ -22,12 +22,13 @@ if (missing.length) {
   );
 }
 
-privateKey = privateKey.replace(/\\n/g, "\n");
+// At this point, we know privateKey is defined due to the check above
+privateKey = privateKey!.replace(/\\n/g, "\n");
 
 admin.initializeApp({
   credential: admin.credential.cert({
-    projectId,
-    clientEmail,
+    projectId: projectId!,
+    clientEmail: clientEmail!,
     privateKey,
   }),
   ...(databaseURL ? { databaseURL } : {}),
