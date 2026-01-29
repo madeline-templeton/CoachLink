@@ -66,6 +66,7 @@ export type BookingPayload = {
   playerSkill: string;
   specificGoals: string;
   additionalComments: string;
+  playerUserId?: string;
 };
 
 export async function bookSession(
@@ -80,5 +81,24 @@ export async function bookSession(
   if (!res.ok) {
     const msg = await res.text();
     throw new Error(`Failed to book session: ${res.status} ${msg}`);
+  }
+}
+
+export async function getUserSessions(
+  userId: string,
+  role: "coach" | "player",
+): Promise<Session[]> {
+  const res = await fetch(`${API_BASE}/sessions/user/${userId}?role=${role}`);
+  if (!res.ok) throw new Error(`Failed to fetch user sessions: ${res.status}`);
+  return res.json();
+}
+
+export async function deleteSession(sessionId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/sessions/${sessionId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const msg = await res.text();
+    throw new Error(`Failed to delete session: ${res.status} ${msg}`);
   }
 }

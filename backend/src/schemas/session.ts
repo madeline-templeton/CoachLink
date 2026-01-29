@@ -25,6 +25,7 @@ export const SessionSchema = z.object({
   coachName: z.string().min(1),
   coachEmail: z.string().email(),
   coachExperience: z.string().min(1),
+  coachUserId: z.string().optional(),
 
   playerName: z.string().min(1),
 
@@ -39,4 +40,6 @@ export const SessionSchema = z.object({
   specificGoals: z.string().max(50),
 
   additionalComments: z.string().max(50),
+
+  playerUserId: z.string().optional(),
 });

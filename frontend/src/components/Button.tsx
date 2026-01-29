@@ -7,7 +7,7 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
-  variant?: "primary" | "success";
+  variant?: "primary" | "success" | "danger";
 };
 
 export default function Button({
@@ -38,7 +38,9 @@ export default function Button({
             ? "#94a3b8"
             : variant === "success"
               ? "#16a34a"
-              : "#2563eb",
+              : variant === "danger"
+                ? "#dc2626"
+                : "#2563eb",
         color: "white",
         cursor: disabled || loading ? "not-allowed" : "pointer",
         fontWeight: 600,

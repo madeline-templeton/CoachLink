@@ -31,19 +31,13 @@ router.get("/", async (req, res) => {
   }
   const { sport, date, state, city } = parse.data;
 
-  let col = firestore.collection("sessions");
-  const constraints: Array<[string, FirebaseFirestore.WhereFilterOp, unknown]> =
-    [];
-  if (sport) constraints.push(["sport", "==", sport]);
-  if (state) constraints.push(["state", "==", state]);
-  if (city) constraints.push(["city", "==", city]);
-  if (date) constraints.push(["dateStr", "==", date]);
+  let query: FirebaseFirestore.Query = firestore.collection("sessions");
+  if (sport) query = query.where("sport", "==", sport);
+  if (state) query = query.where("state", "==", state);
+  if (city) query = query.where("city", "==", city);
+  if (date) query = query.where("dateStr", "==", date);
 
-  for (const [f, op, v] of constraints) {
-    col = col.where(f, op, v);
-  }
-
-  const snap = await col.get();
+  const snap = await query.get();
   const items = snap.docs.map((d) => {
     const data = d.data();
     // Convert Firestore Timestamp date back to ISO string for client ergonomics
@@ -76,8 +70,6 @@ router.post("/", async (req, res) => {
   res.status(201).json({ id: docRef.id, ...payload });
 });
 
-export default router;
-
 // Booking endpoint: update player details and mark as booked
 const BookingSchema = z.object({
   playerName: z.string().min(1),
@@ -87,6 +79,7 @@ const BookingSchema = z.object({
   playerSkill: z.string().min(1),
   specificGoals: z.string().max(50),
   additionalComments: z.string().max(50),
+  playerUserId: z.string().optional(),
 });
 
 router.post("/:id/book", async (req, res) => {
@@ -128,3 +121,53 @@ router.post("/:id/book", async (req, res) => {
 
   res.json({ ok: true });
 });
+
+// Get user's sessions (coach or player)
+router.get("/user/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { role } = req.query;
+
+  if (!role || (role !== "coach" && role !== "player")) {
+    return res.status(400).json({ error: "Invalid role parameter" });
+  }
+
+  try {
+    const field = role === "coach" ? "coachUserId" : "playerUserId";
+    const snap = await firestore
+      .collection("sessions")
+      .where(field, "==", userId)
+      .get();
+
+    const sessions = snap.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.json(sessions);
+  } catch (error) {
+    console.error("Error fetching user sessions:", error);
+    res.status(500).json({ error: "Failed to fetch sessions" });
+  }
+});
+
+// Delete session
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const docRef = firestore.collection("sessions").doc(id);
+    const snap = await docRef.get();
+
+    if (!snap.exists) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    await docRef.delete();
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Error deleting session:", error);
+    res.status(500).json({ error: "Failed to delete session" });
+  }
+});
+
+export default router;

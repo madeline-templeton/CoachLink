@@ -12,4 +12,14 @@ export type Session = {
   cost?: number; // USD
   availableSlots?: number;
   createdAt?: number;
+  booked?: boolean;
+  coachUserId?: string;
+  playerUserId?: string;
+  playerName?: string;
+  playerEmail?: string;
+  playerPhoneNumber?: string;
+  playerAge?: number;
+  playerSkill?: string;
+  specificGoals?: string;
+  additionalComments?: string;
 };
