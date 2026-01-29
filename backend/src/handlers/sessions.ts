@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { firestore } from "../firebase/admin";
+import { firestore } from "../firebase/admin.js";
 import { z } from "zod";
-import { SessionSchema } from "../schemas/session";
-import { sendCoachEmail } from "../utils/email";
+import { SessionSchema } from "../schemas/session.js";
+import { sendCoachEmail } from "../utils/email.js";
 
 const router = Router();
 

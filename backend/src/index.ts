@@ -1,9 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import userHandlers from "./handlers/users";
-import sessionsHandlers from "./handlers/sessions";
-import realtimeHandlers from "./handlers/realtime";
+import userHandlers from "./handlers/users.js";
+import sessionsHandlers from "./handlers/sessions.js";
+import realtimeHandlers from "./handlers/realtime.js";
 
 const app = express();
 app.use(cors());

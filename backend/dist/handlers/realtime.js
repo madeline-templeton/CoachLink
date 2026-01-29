@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { rtdb } from "../firebase/admin";
+import { rtdb } from "../firebase/admin.js";
 const router = Router();
 // Basic health and sample read
 router.get("/status", async (_req, res) => {

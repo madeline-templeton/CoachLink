@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { firestore } from "../firebase/admin";
+import { firestore } from "../firebase/admin.js";
 
 const router = Router();
 
