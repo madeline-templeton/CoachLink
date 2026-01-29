@@ -38,7 +38,10 @@ export function Dropdown({
   return (
     <div className={className}>
       {label && (
-        <label htmlFor={selectId} style={{ display: "block", marginBottom: 4 }}>
+        <label
+          htmlFor={selectId}
+          style={{ display: "block", marginBottom: 4, textAlign: "center" }}
+        >
           {label}
         </label>
       )}

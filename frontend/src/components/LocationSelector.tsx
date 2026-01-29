@@ -37,7 +37,11 @@ export default function LocationSelector({
 
   return (
     <div className={className}>
-      {label && <div style={{ marginBottom: 6, fontWeight: 600 }}>{label}</div>}
+      {label && (
+        <div style={{ marginBottom: 6, fontWeight: 400, textAlign: "center" }}>
+          {label}
+        </div>
+      )}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <select
           aria-label="State"
@@ -49,7 +53,8 @@ export default function LocationSelector({
             padding: "8px 12px",
             borderRadius: 8,
             border: "1px solid #cbd5e1",
-            minWidth: 160,
+            flex: 1,
+            minWidth: 100,
           }}
         >
           <option value="" disabled>
@@ -72,7 +77,8 @@ export default function LocationSelector({
             padding: "8px 12px",
             borderRadius: 8,
             border: "1px solid #cbd5e1",
-            minWidth: 220,
+            flex: 1,
+            minWidth: 100,
           }}
         >
           <option value="" disabled>

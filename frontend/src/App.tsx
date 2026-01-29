@@ -5,9 +5,11 @@ import Dropdown, { Option } from "./components/Dropdown";
 import DatePicker from "./components/DatePicker";
 import LocationSelector, { LocationValue } from "./components/LocationSelector";
 import Button from "./components/Button";
+import SessionCard from "./components/SessionCard";
 import {
   querySessions,
   bookSession,
+  addSession,
   type BookingPayload,
 } from "./services/sessions";
 import type { Session } from "./types/Session";
@@ -34,6 +36,21 @@ export default function App() {
     additionalComments: "",
   });
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [showCoachForm, setShowCoachForm] = useState(false);
+  const [coachSession, setCoachSession] = useState({
+    date: "",
+    sport: "",
+    time: "",
+    state: "",
+    city: "",
+    duration: 0,
+    cost: 0,
+    coachNote: "",
+    coachName: "",
+    coachEmail: "",
+    coachExperience: "",
+  });
+  const [addingSession, setAddingSession] = useState(false);
   const sportOptions: Option[] = [
     { label: "Select a sport", value: "", disabled: true },
     { label: "Tennis", value: "tennis" },
@@ -45,41 +62,44 @@ export default function App() {
   }, []);
   return (
     <div className="app">
-      <h1>CoachLink</h1>
-      <p>{user ? `Signed in as ${user.email}` : "Not signed in"}</p>
-      <div style={{ marginTop: 16 }}>
+      <div className="hero-section">
+        <h1 className="app-title">CoachLink</h1>
+        <p className="welcome-text">
+          Welcome to CoachLink! Use the "Find sessions for me" to book your next
+          training session with a coach near you!
+        </p>
+      </div>
+
+      <h2 className="section-title">Find Your Next Session</h2>
+
+      <div className="search-form">
         <Dropdown
           label="Choose a sport"
           options={sportOptions}
           value={selection}
           onChange={setSelection}
+          placeholder="sport"
         />
-        {selection && <p style={{ marginTop: 8 }}>Selected: {selection}</p>}
-      </div>
-      <div style={{ marginTop: 16 }}>
+
         <DatePicker
           label="Select a date"
           value={selectedDate}
           onChange={setSelectedDate}
         />
-        {selectedDate && <p style={{ marginTop: 8 }}>Date: {selectedDate}</p>}
-      </div>
-      <div style={{ marginTop: 16 }}>
+
         <LocationSelector
-          label="Select location"
+          label="Select a location"
           value={location}
           onChange={setLocation}
         />
-        {location.state && location.city && (
-          <p style={{ marginTop: 8 }}>
-            Location: {location.city}, {location.state}
-          </p>
-        )}
-      </div>
-      <div style={{ marginTop: 24 }}>
+
         <Button
           loading={searching}
           onClick={async () => {
+            if (!location.state) {
+              alert("Please offer at least a state to see available sessions.");
+              return;
+            }
             setSearching(true);
             try {
               const sessions = await querySessions({
@@ -94,40 +114,203 @@ export default function App() {
             }
           }}
         >
-          find sessions for me
+          Find Session
         </Button>
       </div>
+
+      <div className="coach-prompt">
+        <p>
+          Are you a coach?{" "}
+          <button
+            className="link-button"
+            onClick={() => setShowCoachForm(!showCoachForm)}
+          >
+            Click HERE
+          </button>{" "}
+          to add sessions
+        </p>
+      </div>
+
+      {showCoachForm && (
+        <div className="coach-form-section">
+          <h2 className="section-title">Add a New Session</h2>
+          <form
+            className="coach-form"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setAddingSession(true);
+              try {
+                const sessionData = {
+                  date: coachSession.date,
+                  sport: coachSession.sport,
+                  time: coachSession.time,
+                  state: coachSession.state,
+                  city: coachSession.city,
+                  duration: coachSession.duration,
+                  cost: coachSession.cost,
+                  booked: false,
+                  coachNote: coachSession.coachNote,
+                  coachName: coachSession.coachName,
+                  coachEmail: coachSession.coachEmail,
+                  coachExperience: coachSession.coachExperience,
+                  playerName: "playerName",
+                  playerEmail: "player@email.com",
+                  playerPhoneNumber: "0000000",
+                  playerAge: 1,
+                  playerSkill: "N/A",
+                  specificGoals: "N/A",
+                  additionalComments: "N/A",
+                };
+                await addSession(sessionData);
+                alert("Session added successfully!");
+                setCoachSession({
+                  date: "",
+                  sport: "",
+                  time: "",
+                  state: "",
+                  city: "",
+                  duration: 0,
+                  cost: 0,
+                  coachNote: "",
+                  coachName: "",
+                  coachEmail: "",
+                  coachExperience: "",
+                });
+                setShowCoachForm(false);
+              } catch (err: any) {
+                alert(`Failed to add session: ${err.message || err}`);
+              } finally {
+                setAddingSession(false);
+              }
+            }}
+          >
+            <input
+              placeholder="Date (YYYY-MM-DD)"
+              type="date"
+              value={coachSession.date}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, date: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="Sport"
+              value={coachSession.sport}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, sport: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="Time (HH:MM)"
+              type="time"
+              value={coachSession.time}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, time: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="State"
+              value={coachSession.state}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, state: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="City"
+              value={coachSession.city}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, city: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="Duration (minutes)"
+              type="number"
+              min={1}
+              value={coachSession.duration || ""}
+              onChange={(e) =>
+                setCoachSession((s) => ({
+                  ...s,
+                  duration: Number(e.target.value || 0),
+                }))
+              }
+              required
+            />
+            <input
+              placeholder="Cost (USD)"
+              type="number"
+              min={0}
+              step="0.01"
+              value={coachSession.cost || ""}
+              onChange={(e) =>
+                setCoachSession((s) => ({
+                  ...s,
+                  cost: Number(e.target.value || 0),
+                }))
+              }
+              required
+            />
+            <input
+              placeholder="Coach Note (max 50 characters)"
+              maxLength={50}
+              value={coachSession.coachNote}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, coachNote: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="Coach Name"
+              value={coachSession.coachName}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, coachName: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="Coach Email"
+              type="email"
+              value={coachSession.coachEmail}
+              onChange={(e) =>
+                setCoachSession((s) => ({ ...s, coachEmail: e.target.value }))
+              }
+              required
+            />
+            <input
+              placeholder="Coach Experience"
+              value={coachSession.coachExperience}
+              onChange={(e) =>
+                setCoachSession((s) => ({
+                  ...s,
+                  coachExperience: e.target.value,
+                }))
+              }
+              required
+            />
+            <Button type="submit" loading={addingSession}>
+              Confirm Session
+            </Button>
+          </form>
+        </div>
+      )}
+
       {!!results.length && (
-        <div style={{ marginTop: 16 }}>
-          <h2>Available sessions</h2>
-          <ul>
+        <div className="results-section">
+          <h2>Available Sessions</h2>
+          <div className="session-list">
             {results.map((s) => (
-              <li key={s.id} style={{ marginBottom: 12 }}>
-                <div>
-                  <strong>{s.sport}</strong> — {s.city}, {s.state} — {s.date}
-                  {s.coachName ? ` — Coach: ${s.coachName}` : ""}
-                  {s.cost ? ` — $${s.cost}` : ""}
-                  {!s.booked && (
-                    <span style={{ marginLeft: 8 }}>
-                      <Button
-                        variant="success"
-                        onClick={() => {
-                          setBookingId(s.id || null);
-                        }}
-                      >
-                        book
-                      </Button>
-                    </span>
-                  )}
-                  {s.booked && (
-                    <span style={{ marginLeft: 8, color: "#16a34a" }}>
-                      booked
-                    </span>
-                  )}
-                </div>
+              <div key={s.id} className="session-item">
+                <SessionCard
+                  session={s}
+                  onBook={() => setBookingId(s.id || null)}
+                  isBooked={s.booked}
+                />
                 {bookingId === s.id && (
                   <form
-                    style={{ marginTop: 8, display: "grid", gap: 8 }}
+                    className="booking-form"
                     onSubmit={async (e) => {
                       e.preventDefault();
                       if (!s.id) return;
@@ -199,10 +382,10 @@ export default function App() {
                       required
                     />
                     <input
-                      placeholder="Player age"
+                      placeholder="Player age (use the arrows)"
                       type="number"
                       min={1}
-                      value={booking.playerAge}
+                      value={booking.playerAge || ""}
                       onChange={(e) =>
                         setBooking((b) => ({
                           ...b,
@@ -244,7 +427,7 @@ export default function App() {
                       }
                       required
                     />
-                    <div style={{ display: "flex", gap: 8 }}>
+                    <div className="button-group">
                       <Button type="submit" loading={bookingLoading}>
                         confirm booking
                       </Button>
@@ -259,9 +442,9 @@ export default function App() {
                     </div>
                   </form>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>

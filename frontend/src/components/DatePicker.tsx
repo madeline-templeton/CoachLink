@@ -33,7 +33,10 @@ export default function DatePicker({
   return (
     <div className={className}>
       {label && (
-        <label htmlFor={inputId} style={{ display: "block", marginBottom: 4 }}>
+        <label
+          htmlFor={inputId}
+          style={{ display: "block", marginBottom: 4, textAlign: "center" }}
+        >
           {label}
         </label>
       )}

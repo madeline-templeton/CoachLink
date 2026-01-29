@@ -1,3 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Ubuntu,
+    Cantarell,
+    Noto Sans,
+    sans-serif;
+}
+
 .app {
   font-family:
     system-ui,
@@ -9,4 +23,264 @@
     Noto Sans,
     sans-serif;
   padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.app-title {
+  font-size: 4rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+}
+
+.welcome-text {
+  font-size: 1.125rem;
+  color: #1e293b;
+  line-height: 1.6;
+  margin: 0 auto 2.5rem;
+  max-width: 600px;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #3b82f6;
+  text-align: center;
+  margin: 2rem 0 2rem;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.results-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.results-section h2 {
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.session-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.session-item {
+  margin-bottom: 1.5rem;
+}
+
+.session-card {
+  background: white;
+  border: 3px solid #1e293b;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.session-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.session-card-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.session-field {
+  border: 2px solid #1e293b;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  min-width: 200px;
+  background: white;
+}
+
+.session-field-cost {
+  background: #f4d58d;
+  border-color: #1e293b;
+}
+
+.session-field-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.session-field-value {
+  font-size: 0.95rem;
+  color: #1e293b;
+  margin-top: 0.125rem;
+}
+
+.session-card-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 100%;
+}
+
+.coach-info {
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.coach-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.coach-note {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.book-now-button {
+  margin-top: auto;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  padding: 0.75rem 2rem !important;
+  letter-spacing: 0.05em;
+  background: rgba(134, 239, 172, 0.6) !important;
+  color: #166534 !important;
+  border: 3px solid #166534 !important;
+  border-radius: 8px !important;
+}
+
+.booked-badge-large {
+  margin-top: auto;
+  background: #fca5a5;
+  color: #991b1b;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  border: 2px solid #dc2626;
+  letter-spacing: 0.05em;
+}
+
+.booking-form {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.booking-form input {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.booking-form input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.booked-badge {
+  margin-left: 0.5rem;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.coach-prompt {
+  text-align: center;
+  margin: 2rem 0;
+  font-size: 1rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+}
+
+.link-button:hover {
+  color: #2563eb;
+}
+
+.coach-form-section {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.coach-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.coach-form input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.coach-form input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
