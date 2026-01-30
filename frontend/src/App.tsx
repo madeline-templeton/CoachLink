@@ -180,14 +180,18 @@ export default function App() {
                     className="coach-form"
                     onSubmit={async (e) => {
                       e.preventDefault();
-                      
+
                       // Validate session is not in the past
-                      const sessionDateTime = new Date(`${coachSession.date}T${coachSession.time}`);
+                      const sessionDateTime = new Date(
+                        `${coachSession.date}T${coachSession.time}`,
+                      );
                       if (sessionDateTime < new Date()) {
-                        alert("Cannot create a session in the past. Please select a future date and time.");
+                        alert(
+                          "Cannot create a session in the past. Please select a future date and time.",
+                        );
                         return;
                       }
-                      
+
                       setAddingSession(true);
                       try {
                         const sessionData = {
@@ -244,8 +248,7 @@ export default function App() {
                       }
                       required
                     />
-                    <input
-                      placeholder="Sport"
+                    <select
                       value={coachSession.sport}
                       onChange={(e) =>
                         setCoachSession((s) => ({
@@ -254,7 +257,21 @@ export default function App() {
                         }))
                       }
                       required
-                    />
+                      style={{
+                        padding: "0.75rem 1rem",
+                        border: "1px solid #cbd5e1",
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select a sport
+                      </option>
+                      <option value="tennis">Tennis</option>
+                      <option value="soccer">Soccer</option>
+                      <option value="basketball">Basketball</option>
+                    </select>
                     <input
                       placeholder="Time (HH:MM)"
                       type="time"
