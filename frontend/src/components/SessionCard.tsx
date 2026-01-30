@@ -16,6 +16,13 @@ export function SessionCard({ session, onBook, isBooked }: Props) {
     <div className="session-card">
       <div className="session-card-left">
         <div className="session-field">
+          <div className="session-field-label">SPORT</div>
+          <div className="session-field-value">
+            {session.sport || "TBD"}
+          </div>
+        </div>
+
+        <div className="session-field">
           <div className="session-field-label">LOCATION</div>
           <div className="session-field-value">
             {session.city}, {session.state}
@@ -26,14 +33,14 @@ export function SessionCard({ session, onBook, isBooked }: Props) {
           <div className="session-field-label">Date</div>
           <div className="session-field-value">{session.date}</div>
         </div>
+      </div>
 
+      <div className="session-card-middle">
         <div className="session-field">
           <div className="session-field-label">Time</div>
           <div className="session-field-value">{time}</div>
         </div>
-      </div>
 
-      <div className="session-card-middle">
         <div className="session-field">
           <div className="session-field-label">Duration</div>
           <div className="session-field-value">
