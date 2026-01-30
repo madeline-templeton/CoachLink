@@ -38,16 +38,27 @@ router.get("/", async (req, res) => {
   if (date) query = query.where("dateStr", "==", date);
 
   const snap = await query.get();
-  const items = snap.docs.map((d) => {
-    const data = d.data();
-    // Convert Firestore Timestamp date back to ISO string for client ergonomics
-    const dateStr = data.dateStr as string | undefined;
-    return {
-      id: d.id,
-      ...data,
-      date: dateStr ?? data.date, // prefer dateStr (YYYY-MM-DD)
-    };
-  });
+  const now = new Date();
+
+  const items = snap.docs
+    .map((d) => {
+      const data = d.data();
+      // Convert Firestore Timestamp date back to ISO string for client ergonomics
+      const dateStr = data.dateStr as string | undefined;
+      return {
+        id: d.id,
+        ...data,
+        date: dateStr ?? data.date, // prefer dateStr (YYYY-MM-DD)
+      };
+    })
+    .filter((session) => {
+      // Filter out past sessions
+      const sessionDateTime = new Date(
+        `${session.dateStr || session.date}T${session.time || "00:00"}`,
+      );
+      return sessionDateTime > now;
+    });
+
   res.json(items);
 });
 

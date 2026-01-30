@@ -88,6 +88,10 @@ export function CoachDashboard() {
                   <span>{formatDate(session.date)}</span>
                 </div>
                 <div className="info-row">
+                  <span className="label">Time:</span>
+                  <span>{session.time || "N/A"}</span>
+                </div>
+                <div className="info-row">
                   <span className="label">Location:</span>
                   <span>
                     {session.city}, {session.state}

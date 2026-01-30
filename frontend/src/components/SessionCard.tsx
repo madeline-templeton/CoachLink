@@ -9,17 +9,15 @@ type Props = {
 };
 
 export function SessionCard({ session, onBook, isBooked }: Props) {
-  // Format time from date if available (assuming we might add time later)
-  const time = "TBD"; // Placeholder for now
+  // Format time to display
+  const time = session.time || "TBD";
 
   return (
     <div className="session-card">
       <div className="session-card-left">
         <div className="session-field">
           <div className="session-field-label">SPORT</div>
-          <div className="session-field-value">
-            {session.sport || "TBD"}
-          </div>
+          <div className="session-field-value">{session.sport || "TBD"}</div>
         </div>
 
         <div className="session-field">

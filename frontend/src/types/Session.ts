@@ -2,6 +2,7 @@ export type Session = {
   id?: string;
   sport: string; // e.g., 'tennis'
   date: string; // YYYY-MM-DD
+  time?: string; // HH:MM format
   state: string; // e.g., 'RI'
   city: string; // e.g., 'Providence'
   coachName?: string;

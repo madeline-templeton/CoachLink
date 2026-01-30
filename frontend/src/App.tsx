@@ -21,6 +21,14 @@ import {
 import type { Session } from "./types/Session";
 import "./styles.css";
 
+// Helper function to check if a session is in the past
+function isSessionInPast(session: Session): boolean {
+  const sessionDate = session.date || "";
+  const sessionTime = session.time || "00:00"; // Default to midnight if no time
+  const sessionDateTime = new Date(`${sessionDate}T${sessionTime}`);
+  return sessionDateTime < new Date();
+}
+
 export default function App() {
   const { user, userProfile, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState<"home" | "dashboard">("home");
@@ -128,9 +136,9 @@ export default function App() {
             <Button
               loading={searching}
               onClick={async () => {
-                if (!location.state) {
+                if (!selection || !location.state) {
                   alert(
-                    "Please offer at least a state to see available sessions.",
+                    "Please select at least a sport and state to search for sessions in your area.",
                   );
                   return;
                 }
@@ -172,6 +180,14 @@ export default function App() {
                     className="coach-form"
                     onSubmit={async (e) => {
                       e.preventDefault();
+                      
+                      // Validate session is not in the past
+                      const sessionDateTime = new Date(`${coachSession.date}T${coachSession.time}`);
+                      if (sessionDateTime < new Date()) {
+                        alert("Cannot create a session in the past. Please select a future date and time.");
+                        return;
+                      }
+                      
                       setAddingSession(true);
                       try {
                         const sessionData = {
@@ -366,6 +382,12 @@ export default function App() {
                           alert("Only players can book sessions");
                           return;
                         }
+                        if (isSessionInPast(s)) {
+                          alert(
+                            "This session is in the past and cannot be booked",
+                          );
+                          return;
+                        }
                         setBookingId(s.id || null);
                       }}
                       isBooked={s.booked}
@@ -436,7 +458,9 @@ export default function App() {
                           required
                         />
                         <input
-                          placeholder="Player phone number"
+                          placeholder="Player phone number (XXX-XXX-XXXX)"
+                          type="tel"
+                          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                           value={booking.playerPhoneNumber}
                           onChange={(e) =>
                             setBooking((b) => ({
@@ -449,7 +473,8 @@ export default function App() {
                         <input
                           placeholder="Player age (use the arrows)"
                           type="number"
-                          min={1}
+                          min={5}
+                          max={100}
                           value={booking.playerAge || ""}
                           onChange={(e) =>
                             setBooking((b) => ({
@@ -459,8 +484,7 @@ export default function App() {
                           }
                           required
                         />
-                        <input
-                          placeholder="Player skill"
+                        <select
                           value={booking.playerSkill}
                           onChange={(e) =>
                             setBooking((b) => ({
@@ -469,7 +493,21 @@ export default function App() {
                             }))
                           }
                           required
-                        />
+                          style={{
+                            padding: "0.625rem 0.875rem",
+                            border: "1px solid #cbd5e1",
+                            borderRadius: "8px",
+                            fontSize: "0.95rem",
+                            fontFamily: "inherit",
+                          }}
+                        >
+                          <option value="" disabled>
+                            Select skill level
+                          </option>
+                          <option value="beginner">Beginner</option>
+                          <option value="intermediate">Intermediate</option>
+                          <option value="advanced">Advanced</option>
+                        </select>
                         <input
                           placeholder="Specific goals"
                           value={booking.specificGoals}

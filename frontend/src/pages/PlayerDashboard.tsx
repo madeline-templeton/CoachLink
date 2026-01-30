@@ -40,14 +40,16 @@ export function PlayerDashboard() {
 
   const upcomingSessions = sessions.filter((s) => {
     const dateStr = formatDate(s.date);
-    const sessionDate = new Date(dateStr);
-    return sessionDate >= new Date();
+    const timeStr = s.time || "00:00";
+    const sessionDateTime = new Date(`${dateStr}T${timeStr}`);
+    return sessionDateTime >= new Date();
   });
 
   const pastSessions = sessions.filter((s) => {
     const dateStr = formatDate(s.date);
-    const sessionDate = new Date(dateStr);
-    return sessionDate < new Date();
+    const timeStr = s.time || "00:00";
+    const sessionDateTime = new Date(`${dateStr}T${timeStr}`);
+    return sessionDateTime < new Date();
   });
 
   if (loading) {
@@ -81,6 +83,10 @@ export function PlayerDashboard() {
                       <div className="info-row">
                         <span className="label">Date:</span>
                         <span>{formatDate(session.date)}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="label">Time:</span>
+                        <span>{session.time || "N/A"}</span>
                       </div>
                       <div className="info-row">
                         <span className="label">Location:</span>
@@ -130,6 +136,10 @@ export function PlayerDashboard() {
                       <div className="info-row">
                         <span className="label">Date:</span>
                         <span>{formatDate(session.date)}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="label">Time:</span>
+                        <span>{session.time || "N/A"}</span>
                       </div>
                       <div className="info-row">
                         <span className="label">Location:</span>
