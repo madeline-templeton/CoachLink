@@ -2,7 +2,7 @@ import { Router } from "express";
 import { firestore } from "../firebase/admin.js";
 import { z } from "zod";
 import { SessionSchema } from "../schemas/session.js";
-import { sendCoachEmail } from "../utils/email.js";
+import { sendCoachEmail, sendPlayerEmail } from "../utils/email.js";
 
 const router = Router();
 
@@ -113,24 +113,47 @@ router.post("/:id/book", async (req, res) => {
   };
   await docRef.update(update);
 
-  try {
-    await sendCoachEmail({
-      to: data.coachEmail,
-      coachName: data.coachName,
-      session: {
-        sport: data.sport,
-        dateStr: data.dateStr,
-        time: data.time,
-        city: data.city,
-        state: data.state,
-      },
-      player: parsed.data,
-    });
-  } catch (e) {
-    console.warn("Email send failed:", e);
-  }
-
+  // Respond immediately - don't make user wait for emails
   res.json({ ok: true });
+
+  // Send emails in background (no await)
+  console.log(`📧 Sending coach email to: ${data.coachEmail}`);
+  sendCoachEmail({
+    to: data.coachEmail,
+    coachName: data.coachName,
+    session: {
+      sport: data.sport,
+      dateStr: data.dateStr,
+      time: data.time,
+      city: data.city,
+      state: data.state,
+    },
+    player: parsed.data,
+  })
+    .then(() => console.log(`✅ Coach email sent successfully to ${data.coachEmail}`))
+    .catch((e) => console.error("❌ Coach email send failed:", e));
+
+  console.log(`📧 Sending player email to: ${parsed.data.playerEmail}`);
+  sendPlayerEmail({
+    to: parsed.data.playerEmail,
+    playerName: parsed.data.playerName,
+    session: {
+      sport: data.sport,
+      dateStr: data.dateStr,
+      time: data.time,
+      city: data.city,
+      state: data.state,
+      duration: data.duration,
+      cost: data.cost,
+    },
+    coach: {
+      coachName: data.coachName,
+      coachEmail: data.coachEmail,
+      coachExperience: data.coachExperience,
+    },
+  })
+    .then(() => console.log(`✅ Player email sent successfully to ${parsed.data.playerEmail}`))
+    .catch((e) => console.error("❌ Player email send failed:", e));
 });
 
 // Get user's sessions (coach or player)

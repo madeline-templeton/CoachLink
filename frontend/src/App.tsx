@@ -16,6 +16,7 @@ import {
   querySessions,
   bookSession,
   addSession,
+  getUserSessions,
   type BookingPayload,
 } from "./services/sessions";
 import type { Session } from "./types/Session";
@@ -27,6 +28,40 @@ function isSessionInPast(session: Session): boolean {
   const sessionTime = session.time || "00:00"; // Default to midnight if no time
   const sessionDateTime = new Date(`${sessionDate}T${sessionTime}`);
   return sessionDateTime < new Date();
+}
+
+// Helper function to check if a new session overlaps with existing sessions
+function hasTimeConflict(
+  newSession: { date: string; time: string; duration: number },
+  existingSessions: Session[],
+): { conflict: boolean; conflictingSession?: Session } {
+  const newStart = new Date(`${newSession.date}T${newSession.time}`);
+  const newEnd = new Date(newStart.getTime() + newSession.duration * 60000);
+
+  for (const existing of existingSessions) {
+    // Get the date as a string (use dateStr if available, otherwise try to convert date)
+    const existingDateStr =
+      existing.dateStr ||
+      (typeof existing.date === "string" ? existing.date : null);
+
+    // Skip if not the same date
+    if (existingDateStr !== newSession.date) continue;
+
+    // Skip sessions without time or duration
+    if (!existing.time || !existing.duration) continue;
+
+    const existingStart = new Date(`${existingDateStr}T${existing.time}`);
+    const existingEnd = new Date(
+      existingStart.getTime() + existing.duration * 60000,
+    );
+
+    // Check if time ranges overlap
+    if (newStart < existingEnd && newEnd > existingStart) {
+      return { conflict: true, conflictingSession: existing };
+    }
+  }
+
+  return { conflict: false };
 }
 
 export default function App() {
@@ -190,6 +225,53 @@ export default function App() {
                           "Cannot create a session in the past. Please select a future date and time.",
                         );
                         return;
+                      }
+
+                      // Check for time conflicts with existing sessions
+                      if (user?.uid) {
+                        try {
+                          const existingSessions = await getUserSessions(
+                            user.uid,
+                            "coach",
+                          );
+
+                          const { conflict, conflictingSession } =
+                            hasTimeConflict(
+                              {
+                                date: coachSession.date,
+                                time: coachSession.time,
+                                duration: coachSession.duration,
+                              },
+                              existingSessions,
+                            );
+
+                          if (conflict && conflictingSession) {
+                            const conflictTime =
+                              conflictingSession.time || "00:00";
+                            const conflictDateStr =
+                              conflictingSession.dateStr ||
+                              (typeof conflictingSession.date === "string"
+                                ? conflictingSession.date
+                                : "Unknown date");
+                            const conflictStart = new Date(
+                              `${conflictDateStr}T${conflictTime}`,
+                            );
+                            const conflictEnd = new Date(
+                              conflictStart.getTime() +
+                                (conflictingSession.duration || 0) * 60000,
+                            );
+                            const endTimeStr = conflictEnd
+                              .toTimeString()
+                              .slice(0, 5);
+
+                            alert(
+                              `Time conflict detected! You already have a ${conflictingSession.sport} session from ${conflictTime} to ${endTimeStr} on ${conflictDateStr}. Please choose a different time.`,
+                            );
+                            return;
+                          }
+                        } catch (err) {
+                          console.error("Error checking for conflicts:", err);
+                        }
                       }
 
                       setAddingSession(true);
