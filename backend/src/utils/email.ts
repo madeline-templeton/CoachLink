@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 
 export type CoachEmailParams = {
   to: string;
@@ -22,29 +22,18 @@ export type CoachEmailParams = {
 };
 
 export async function sendCoachEmail(params: CoachEmailParams) {
-  const {
-    SMTP_HOST,
-    SMTP_PORT,
-    SMTP_USER,
-    SMTP_PASS,
-    FROM_EMAIL = SMTP_USER,
-  } = process.env as Record<string, string | undefined>;
+  const { SENDGRID_API_KEY, FROM_EMAIL } = process.env as Record<
+    string,
+    string | undefined
+  >;
 
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !FROM_EMAIL) {
+  if (!SENDGRID_API_KEY || !FROM_EMAIL) {
     throw new Error(
-      "SMTP env not configured: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL",
+      "SendGrid env not configured: SENDGRID_API_KEY, FROM_EMAIL",
     );
   }
 
-  const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: Number(SMTP_PORT),
-    secure: Number(SMTP_PORT) === 465,
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
-    },
-  });
+  sgMail.setApiKey(SENDGRID_API_KEY);
 
   const subject = `New booking for ${params.session.sport} (${params.session.city}, ${params.session.state})`;
   const lines = [
@@ -68,7 +57,7 @@ export async function sendCoachEmail(params: CoachEmailParams) {
     `Please reach out to the player to coordinate before the session.`,
   ].filter(Boolean) as string[];
 
-  await transporter.sendMail({
+  await sgMail.send({
     from: FROM_EMAIL,
     to: params.to,
     subject,
@@ -96,29 +85,18 @@ export type PlayerEmailParams = {
 };
 
 export async function sendPlayerEmail(params: PlayerEmailParams) {
-  const {
-    SMTP_HOST,
-    SMTP_PORT,
-    SMTP_USER,
-    SMTP_PASS,
-    FROM_EMAIL = SMTP_USER,
-  } = process.env as Record<string, string | undefined>;
+  const { SENDGRID_API_KEY, FROM_EMAIL } = process.env as Record<
+    string,
+    string | undefined
+  >;
 
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !FROM_EMAIL) {
+  if (!SENDGRID_API_KEY || !FROM_EMAIL) {
     throw new Error(
-      "SMTP env not configured: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL",
+      "SendGrid env not configured: SENDGRID_API_KEY, FROM_EMAIL",
     );
   }
 
-  const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: Number(SMTP_PORT),
-    secure: Number(SMTP_PORT) === 465,
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
-    },
-  });
+  sgMail.setApiKey(SENDGRID_API_KEY);
 
   const subject = `Booking Confirmed: ${params.session.sport} session with ${params.coach.coachName}`;
   const lines = [
@@ -144,7 +122,7 @@ export async function sendPlayerEmail(params: PlayerEmailParams) {
     `See you on the field!`,
   ].filter(Boolean) as string[];
 
-  await transporter.sendMail({
+  await sgMail.send({
     from: FROM_EMAIL,
     to: params.to,
     subject,
