@@ -42,7 +42,7 @@ router.get("/", async (req, res) => {
 
   const items = snap.docs
     .map((d) => {
-      const data = d.data();
+      const data = d.data() as any;
       // Convert Firestore Timestamp date back to ISO string for client ergonomics
       const dateStr = data.dateStr as string | undefined;
       return {
@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
         date: dateStr ?? data.date, // prefer dateStr (YYYY-MM-DD)
       };
     })
-    .filter((session) => {
+    .filter((session: any) => {
       // Filter out past sessions
       const sessionDateTime = new Date(
         `${session.dateStr || session.date}T${session.time || "00:00"}`,
@@ -130,7 +130,9 @@ router.post("/:id/book", async (req, res) => {
     },
     player: parsed.data,
   })
-    .then(() => console.log(`✅ Coach email sent successfully to ${data.coachEmail}`))
+    .then(() =>
+      console.log(`✅ Coach email sent successfully to ${data.coachEmail}`),
+    )
     .catch((e) => console.error("❌ Coach email send failed:", e));
 
   console.log(`📧 Sending player email to: ${parsed.data.playerEmail}`);
@@ -152,7 +154,11 @@ router.post("/:id/book", async (req, res) => {
       coachExperience: data.coachExperience,
     },
   })
-    .then(() => console.log(`✅ Player email sent successfully to ${parsed.data.playerEmail}`))
+    .then(() =>
+      console.log(
+        `✅ Player email sent successfully to ${parsed.data.playerEmail}`,
+      ),
+    )
     .catch((e) => console.error("❌ Player email send failed:", e));
 });
 
