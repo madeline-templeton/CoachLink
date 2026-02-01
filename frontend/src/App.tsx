@@ -525,7 +525,9 @@ export default function App() {
                               specificGoals: "",
                               additionalComments: "",
                             });
-                            alert("Booked! Coach will be emailed.");
+                            alert(
+                              "Your session is booked! You and your coach will receive confirmation emails within 10 minutes. Your coach will reach out with session specifics soon. Have fun!!",
+                            );
                           } catch (err: any) {
                             alert(`Booking failed: ${err.message || err}`);
                           } finally {
