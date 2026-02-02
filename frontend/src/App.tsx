@@ -74,6 +74,7 @@ export default function App() {
     city: "",
   });
   const [searching, setSearching] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false);
   const [results, setResults] = useState<Session[]>([]);
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [booking, setBooking] = useState<BookingPayload>({
@@ -178,6 +179,7 @@ export default function App() {
                   return;
                 }
                 setSearching(true);
+                setSearchPerformed(true);
                 try {
                   const sessions = await querySessions({
                     sport: selection || undefined,
@@ -462,6 +464,14 @@ export default function App() {
                 </div>
               )}
             </>
+          )}
+
+          {searchPerformed && results.length === 0 && (
+            <div className="empty-state" style={{ marginTop: "2rem" }}>
+              <p>
+                There are currently no coaches offering sessions in your area
+              </p>
+            </div>
           )}
 
           {!!results.length && (

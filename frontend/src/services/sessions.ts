@@ -102,3 +102,11 @@ export async function deleteSession(sessionId: string): Promise<void> {
     throw new Error(`Failed to delete session: ${res.status} ${msg}`);
   }
 }
+
+export async function getAvailableCities(state?: string): Promise<string[]> {
+  const qs = state ? `?state=${encodeURIComponent(state)}` : "";
+  const res = await fetch(`${API_BASE}/sessions/cities${qs}`);
+  if (!res.ok)
+    throw new Error(`Failed to fetch available cities: ${res.status}`);
+  return res.json();
+}

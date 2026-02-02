@@ -1,5 +1,6 @@
-import React from "react";
-import { STATES, CITIES_BY_STATE } from "../services/locations";
+import React, { useEffect, useState } from "react";
+import { STATES } from "../services/locations";
+import { getAvailableCities } from "../services/sessions";
 
 export type LocationValue = {
   state: string;
@@ -27,7 +28,29 @@ export default function LocationSelector({
   required,
   className,
 }: Props) {
-  const cities = value.state ? (CITIES_BY_STATE[value.state] ?? []) : [];
+  const [cities, setCities] = useState<string[]>([]);
+  const [loadingCities, setLoadingCities] = useState(false);
+
+  // Fetch cities when state changes
+  useEffect(() => {
+    if (value.state) {
+      setLoadingCities(true);
+      getAvailableCities(value.state)
+        .then((fetchedCities) => {
+          setCities(fetchedCities);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch cities:", error);
+          setCities([]);
+        })
+        .finally(() => {
+          setLoadingCities(false);
+        });
+    } else {
+      setCities([]);
+    }
+  }, [value.state]);
+
   const handleStateChange = (state: string) => {
     onChange({ state, city: "" });
   };
@@ -71,7 +94,7 @@ export default function LocationSelector({
           aria-label="City"
           value={value.city}
           onChange={(e) => handleCityChange(e.target.value)}
-          disabled={disabled || !value.state}
+          disabled={disabled || !value.state || loadingCities}
           required={required}
           style={{
             padding: "8px 12px",
@@ -82,7 +105,11 @@ export default function LocationSelector({
           }}
         >
           <option value="" disabled>
-            {placeholderCity}
+            {loadingCities
+              ? "Loading cities..."
+              : cities.length === 0 && value.state
+                ? "No cities available"
+                : placeholderCity}
           </option>
           {cities.map((c) => (
             <option key={c} value={c}>

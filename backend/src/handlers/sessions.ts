@@ -62,6 +62,38 @@ router.get("/", async (req, res) => {
   res.json(items);
 });
 
+// Get available cities (optionally filtered by state)
+router.get("/cities", async (req, res) => {
+  const { state } = req.query;
+
+  try {
+    let query: FirebaseFirestore.Query = firestore.collection("sessions");
+
+    // If state is provided, filter by state
+    if (state && typeof state === "string") {
+      query = query.where("state", "==", state);
+    }
+
+    const snap = await query.get();
+
+    // Extract unique cities from all sessions
+    const citiesSet = new Set<string>();
+    snap.docs.forEach((doc) => {
+      const data = doc.data();
+      if (data.city) {
+        citiesSet.add(data.city);
+      }
+    });
+
+    // Convert to sorted array
+    const cities = Array.from(citiesSet).sort();
+    res.json(cities);
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    res.status(500).json({ error: "Failed to fetch cities" });
+  }
+});
+
 router.post("/", async (req, res) => {
   const parsed = SessionInputSchema.safeParse(req.body);
   if (!parsed.success) {

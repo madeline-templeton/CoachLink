@@ -1,5 +1,59 @@
 import { z } from "zod";
 
+// Valid US state codes
+const VALID_STATE_CODES = [
+  "AL",
+  "AK",
+  "AZ",
+  "AR",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "FL",
+  "GA",
+  "HI",
+  "ID",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
+  "LA",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MN",
+  "MS",
+  "MO",
+  "MT",
+  "NE",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "NC",
+  "ND",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "UT",
+  "VT",
+  "VA",
+  "WA",
+  "WV",
+  "WI",
+  "WY",
+] as const;
+
 export const SessionSchema = z.object({
   date: z.date(),
 
@@ -10,7 +64,9 @@ export const SessionSchema = z.object({
     .string()
     .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Time must be in HH:MM format"),
 
-  state: z.string().min(1),
+  state: z.enum(VALID_STATE_CODES, {
+    errorMap: () => ({ message: "Invalid state code" }),
+  }),
   city: z.string().min(1),
 
   duration: z.number().int().positive(),

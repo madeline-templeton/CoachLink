@@ -108,7 +108,9 @@ export async function sendPlayerEmail(params: PlayerEmailParams) {
     `Sport: ${params.session.sport}`,
     params.session.dateStr ? `Date: ${params.session.dateStr}` : undefined,
     params.session.time ? `Time: ${params.session.time}` : undefined,
-    params.session.duration ? `Duration: ${params.session.duration} minutes` : undefined,
+    params.session.duration
+      ? `Duration: ${params.session.duration} minutes`
+      : undefined,
     params.session.cost ? `Cost: $${params.session.cost}` : undefined,
     `Location: ${params.session.city}, ${params.session.state}`,
     "",
