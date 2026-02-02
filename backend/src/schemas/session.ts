@@ -65,7 +65,7 @@ export const SessionSchema = z.object({
     .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Time must be in HH:MM format"),
 
   state: z.enum(VALID_STATE_CODES, {
-    errorMap: () => ({ message: "Invalid state code" }),
+    message: "Invalid state code",
   }),
   city: z.string().min(1),
 
