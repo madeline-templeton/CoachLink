@@ -114,14 +114,14 @@ export async function sendPlayerEmail(params: PlayerEmailParams) {
     params.session.cost ? `Cost: $${params.session.cost}` : undefined,
     `Location: ${params.session.city}, ${params.session.state}`,
     "",
-    `Your Coach:`,
+    `Coach:`,
     `Name: ${params.coach.coachName}`,
     `Email: ${params.coach.coachEmail}`,
     `Experience: ${params.coach.coachExperience}`,
     "",
-    `Your coach may reach out to you before the session. Please check your email and be ready at the scheduled time!`,
+    `Your coach will reach out to you before the session to specify an address and answer any questions. Please look out for their communication and be sure to respond in a timely manner.`,
     "",
-    `See you on the field!`,
+    `Enjoy your session!`,
   ].filter(Boolean) as string[];
 
   await sgMail.send({

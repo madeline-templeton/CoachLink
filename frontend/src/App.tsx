@@ -76,6 +76,7 @@ export default function App() {
   const [searching, setSearching] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [results, setResults] = useState<Session[]>([]);
+  const [availableLocations, setAvailableLocations] = useState<string[]>([]);
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [booking, setBooking] = useState<BookingPayload>({
     playerName: "",
@@ -141,8 +142,9 @@ export default function App() {
           <div className="hero-section">
             <h1 className="app-title">CoachLink</h1>
             <p className="welcome-text">
-              Welcome to CoachLink! Use the "Find sessions for me" to book your
-              next training session with a coach near you!
+              Welcome to CoachLink! Login as a player to use the "find your next
+              session" to book your next training session with a coach near you!
+              Login as a coach to add sessions and find players in your area.
             </p>
           </div>
 
@@ -188,6 +190,21 @@ export default function App() {
                     city: location.city || undefined,
                   });
                   setResults(sessions);
+
+                  // If no results, fetch all locations for this sport
+                  if (sessions.length === 0 && selection) {
+                    const allSportSessions = await querySessions({
+                      sport: selection,
+                    });
+                    const locations = Array.from(
+                      new Set(
+                        allSportSessions.map((s) => `${s.city}, ${s.state}`),
+                      ),
+                    ).sort();
+                    setAvailableLocations(locations);
+                  } else {
+                    setAvailableLocations([]);
+                  }
                 } finally {
                   setSearching(false);
                 }
@@ -468,9 +485,20 @@ export default function App() {
 
           {searchPerformed && results.length === 0 && (
             <div className="empty-state" style={{ marginTop: "2rem" }}>
-              <p>
-                There are currently no coaches offering sessions in your area
-              </p>
+              {availableLocations.length > 0 ? (
+                <>
+                  <p>
+                    There are currently no coaches offering sessions in your
+                    area
+                  </p>
+                  <p style={{ marginTop: "1rem" }}>
+                    Lessons for {selection} are currently offered in:{" "}
+                    {availableLocations.join("; ")}
+                  </p>
+                </>
+              ) : (
+                <p>No {selection} lessons are currently available</p>
+              )}
             </div>
           )}
 
